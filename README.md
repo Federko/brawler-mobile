@@ -8,3 +8,5 @@ Mobile Client for brawler spectators
 * display on a canvas the list of battling players (with their icon)
 * on the right of each row, display 4 buttons: thumb up, thumb down, clap, boo
 * clicking on a button sends a message to brawler-services
+ 
+ * 20170616 record 3 seconds audio and send to server
