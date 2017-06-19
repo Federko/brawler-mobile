@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class ButtonManager : MonoBehaviour {
 
@@ -9,27 +10,45 @@ public class ButtonManager : MonoBehaviour {
 
     private string deviceName;
 
-    private int buttonClicked;
+    private Button button;
 
-	// Use this for initialization
-	void Start () {
+    void Awake()
+    {
+        button = GetComponent<Button>();
+        button.onClick.AddListener(() => { SendPacket(); });
+    }
+
+    // Use this for initialization
+    void Start () {
        
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
-
-    public void Button0()
-    {
-        buttonClicked = (int)Code.Zero;
-        Debug.Log("Button " + buttonClicked + "NamePlayer " + GameObject.Find("Bar0").transform.Find("NamePlayer").GetComponent<Text>().text);
+       
     }
 
-    public void Button1()
-    {
-        buttonClicked = (int)Code.First;
-        Debug.Log("Button " + buttonClicked + "NamePlayer " + GameObject.Find("Bar1").transform.Find("NamePlayer").GetComponent<Text>().text);
+    public void SendPacket()
+    {      
+        if(button.name == "Button")
+        {
+            Debug.Log("Code " + "0 " + "-  " + button.transform.parent.Find("NamePlayer").GetComponent<Text>().text
+                       + " " + SystemInfo.deviceUniqueIdentifier); 
+        }
+        else if(button.name == "Button (1)")
+        {
+            Debug.Log("Code " + "1 " + "- " + button.transform.parent.Find("NamePlayer").GetComponent<Text>().text
+                      + " " + SystemInfo.deviceUniqueIdentifier);
+        }
+        else if(button.name == "Button (2)")
+        {
+            Debug.Log("Code " + "2 " + "- " + button.transform.parent.Find("NamePlayer").GetComponent<Text>().text
+                     + " " + SystemInfo.deviceUniqueIdentifier);
+        }
+        else if(button.name == "Button (3)")
+        {
+            Debug.Log("Code " + "3 " + "- " + button.transform.parent.Find("NamePlayer").GetComponent<Text>().text
+                     + " " + SystemInfo.deviceUniqueIdentifier);
+        }     
     }
 }
