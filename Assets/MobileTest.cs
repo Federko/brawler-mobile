@@ -17,10 +17,10 @@ public class MobileTest : MonoBehaviour
     private Dictionary<string, string> DesJson;
     private List<GameObject> barPrefabs;
 
-    private List<Text> texts;
+    private List<Text> textPlayers;
     private List<string> nicknames;
     private List<string> urls;
-    private List<Image> images;
+    private List<Image> photoPlayers;
 
     // Use this for initialization
     void Start()
@@ -29,10 +29,10 @@ public class MobileTest : MonoBehaviour
         asyncOp = Request.Send();
 
         barPrefabs = new List<GameObject>();
-        texts = new List<Text>();
+        textPlayers = new List<Text>();
         nicknames = new List<string>();
         urls = new List<string>();
-        images = new List<Image>();
+        photoPlayers = new List<Image>();
     }
 
     // Update is called once per frame
@@ -45,7 +45,7 @@ public class MobileTest : MonoBehaviour
                 json = Encoding.UTF8.GetString(Request.downloadHandler.data);
                 DesJson = (Dictionary<string,string>)JsonConvert.DeserializeObject(json, typeof(Dictionary<string,string>));
 
-                if (DesJson.Count == 0)
+                if (DesJson.Count <= 0)
                 {
                     Debug.Log("No Players Connected");
                     return;
@@ -66,9 +66,9 @@ public class MobileTest : MonoBehaviour
 
         //For each prefab text print player name
         int t = 0;
-        foreach(Text text in texts)
+        foreach(Text text in textPlayers)
         {
-            if (t >= texts.Count)
+            if (t >= textPlayers.Count)
                 return;
 
             t++;
@@ -77,7 +77,7 @@ public class MobileTest : MonoBehaviour
   
         //For each prefab image print player photo
         int b = 0;
-        foreach(Image image in images)
+        foreach(Image image in photoPlayers)
         {
             if (b >= urls.Count)
                 return;
@@ -96,8 +96,9 @@ public class MobileTest : MonoBehaviour
                     return;
             }
 
-            GameObject bar = Instantiate(barPrefab, GameObject.Find("Canvas").transform);
+            GameObject bar = Instantiate(barPrefab, FindObjectOfType<Canvas>().transform);
             bar.name = "Bar" + i;
+          //  bar.gameObject.AddComponent<TextureDownload>().Download();
             barPrefabs.Add(bar);
 
             foreach (GameObject prefab in barPrefabs)
@@ -109,10 +110,10 @@ public class MobileTest : MonoBehaviour
         foreach (GameObject prefab in barPrefabs)
         {
             Text NamePlayer = prefab.transform.Find("NamePlayer").GetComponent<Text>();
-            texts.Add(NamePlayer);
+            textPlayers.Add(NamePlayer);
 
             Image image = prefab.transform.Find("Image").GetComponent<Image>();
-            images.Add(image);
+            photoPlayers.Add(image);
         }
     }
 }       

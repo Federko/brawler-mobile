@@ -2,29 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
+
+
 
 public class TextureDownload : MonoBehaviour {
-
-    public string urlPng;
   
     private Image image;
     private Sprite sprite;
 
-  
-	// Update is called once per frame
-	void Update () {
-       
+    void Start()
+    {
+        StartCoroutine(GetTexture());
     }
 
-    IEnumerator Start()
-    {  
-        WWW www = new WWW(gameObject.name);
-        yield return www;
-     
-        if(www.texture != null)
-        {        
-            sprite = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0 ,0));  
-             GetComponent<Image>().overrideSprite = sprite;            
-        }     
+    // Update is called once per frame
+    void Update () {
+      
+    }
+
+    IEnumerator GetTexture()
+    {
+        UnityWebRequest www = UnityWebRequest.GetTexture("http://" + gameObject.name);
+        yield return www.Send();
+
+        if (www.isError)
+        {
+            Debug.Log(www.error);
+        }
+        else {
+            Texture2D myTexture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            sprite = CreateSprite(myTexture);
+            GetComponent<Image>().overrideSprite = sprite;
+        }      
+    }
+    private Sprite CreateSprite(Texture2D texture)
+    {
+        if (texture == null)
+            return null;
+
+        return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
     }
 }
