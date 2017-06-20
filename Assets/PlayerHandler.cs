@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerHandler : MonoBehaviour
@@ -28,5 +29,9 @@ public class PlayerHandler : MonoBehaviour
         player.transform.SetParent(transform);
         player.transform.localScale = Vector3.one;
         PlayersNumber.text = "Players:\n" + transform.childCount + "/8";
+    }
+    public void ChangeScene()
+    {
+        SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
     }
 }
