@@ -8,21 +8,21 @@ using System.Text;
 
 public class AudioRegister : MonoBehaviour
 {
-    public AudioSource audio;
+    public Image recordBar;
+    public Image maxRecordBar;
+
+    public int maxTime;
 
     private AudioClip clip;
     private Button button;
-    ColorBlock defaultColors;
-    ColorBlock pressedColors;
+    private ColorBlock defaultColors;
+    private ColorBlock pressedColors;
 
     string[] microphones;
 
     private float t;
 
-    UnityWebRequest request;
-    AsyncOperation operation;
-
-    private string url;
+    public AudioClip Clip { get { return clip; } }
     // Use this for initialization
     void Start()
     {
@@ -34,58 +34,36 @@ public class AudioRegister : MonoBehaviour
         pressedColors.pressedColor = defaultColors.normalColor;
 
         microphones = Microphone.devices;
-
-        url = "http://taiga.aiv01.it/mobile/match/audio/";
     }
 
-    public class JsonResponse
-    {
-        public bool mobile_upload_audio;
-    }
+ 
 
     // Update is called once per frame
     void Update()
     {
-        if(operation!=null && operation.isDone)
+        if(Microphone.IsRecording(microphones[0]))
         {
-            JsonResponse response = JsonUtility.FromJson<JsonResponse>(request.downloadHandler.text);
-
-            if (response.mobile_upload_audio)
-                Debug.Log("Uploaded");
-            else
-            Debug.Log("upload failed");
+            t += Time.deltaTime;
+            recordBar.fillAmount = t / maxTime;
+            if(t>=maxTime)
+            {
+                StopRegisterAudio();
+                t = 0f;
+            }
         }
     }
     private void StartRegisterAudio()
     {
         t = 0f;
-        clip = Microphone.Start(microphones[0], false, 3, 22050);
+        clip = Microphone.Start(microphones[0], false, maxTime, 22050);
         button.colors = pressedColors;
-    }
-    private void RegisterAudio()
-    {
-        t += Time.deltaTime;
+        recordBar.gameObject.SetActive(true);
+        maxRecordBar.gameObject.SetActive(true);
     }
     private void StopRegisterAudio()
     {
         Microphone.End(microphones[0]);
         button.colors = defaultColors;
-        float[] array = new float[clip.channels * clip.samples];
-        audio.clip = clip;
-        if (clip.GetData(array, 0))
-        {
-            byte[] rawAudio = new byte[array.Length * sizeof(float)];
-            Buffer.BlockCopy(array, 0, rawAudio, 0, array.Length);
-            string formData = BitConverter.ToString(rawAudio);
-            request = UnityWebRequest.Post(url+"?mobile_id=" + SystemInfo.deviceUniqueIdentifier, formData);
-            UploadHandlerRaw upHandler = new UploadHandlerRaw(rawAudio);
-            upHandler.contentType = "Application/octet-stream";
-            request.uploadHandler = upHandler;
-            operation = request.Send();
-            return;
-        }
-        Debug.Log("ERROR! IMPOSSIBLE GET RAW AUDIO");
-        
     }
     public void HandleAudio()
     {
@@ -93,5 +71,12 @@ public class AudioRegister : MonoBehaviour
             StopRegisterAudio();
         else
             StartRegisterAudio();
+    }
+    public void DisableBar()
+    {
+        recordBar.fillAmount = 0f;
+        recordBar.gameObject.SetActive(false);
+        maxRecordBar.gameObject.SetActive(false);
+        button.colors = defaultColors;
     }
 }
