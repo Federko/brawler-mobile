@@ -21,8 +21,6 @@ public class AudioRegister : MonoBehaviour
     string[] microphones;
 
     private float t;
-
-    public AudioClip Clip { get { return clip; } }
     // Use this for initialization
     void Start()
     {
@@ -36,16 +34,16 @@ public class AudioRegister : MonoBehaviour
         microphones = Microphone.devices;
     }
 
- 
+
 
     // Update is called once per frame
     void Update()
     {
-        if(Microphone.IsRecording(microphones[0]))
+        if (Microphone.IsRecording(microphones[0]))
         {
             t += Time.deltaTime;
             recordBar.fillAmount = t / maxTime;
-            if(t>=maxTime)
+            if (t >= maxTime)
             {
                 StopRegisterAudio();
                 t = 0f;
@@ -62,8 +60,11 @@ public class AudioRegister : MonoBehaviour
     }
     private void StopRegisterAudio()
     {
-        Microphone.End(microphones[0]);
+        if (Microphone.IsRecording(microphones[0]))
+            Microphone.End(microphones[0]);
+
         button.colors = defaultColors;
+        GetComponent<SendAudio>().SetAudioClip(clip);
     }
     public void HandleAudio()
     {

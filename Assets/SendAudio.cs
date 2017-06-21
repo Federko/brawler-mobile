@@ -17,8 +17,6 @@ public class SendAudio : MonoBehaviour
     void Start()
     {
         url = "http://taiga.aiv01.it/mobile/match/audio/";
-
-        clip = transform.parent.GetComponentInChildren<AudioRegister>().Clip;
     }
 
     // Update is called once per frame
@@ -48,9 +46,10 @@ public class SendAudio : MonoBehaviour
             byte[] rawAudio = new byte[array.Length * sizeof(float)];
             Buffer.BlockCopy(array, 0, rawAudio, 0, array.Length);
             string formData = BitConverter.ToString(rawAudio);
+            Debug.Log(formData);
             request = UnityWebRequest.Post(url + "?mobile_id=" + SystemInfo.deviceUniqueIdentifier, formData);
             UploadHandlerRaw upHandler = new UploadHandlerRaw(rawAudio);
-            upHandler.contentType = "Application/octet-stream";
+            upHandler.contentType = "application/octet-stream";
             request.uploadHandler = upHandler;
             operation = request.Send();
             return;
@@ -60,5 +59,9 @@ public class SendAudio : MonoBehaviour
     public class JsonResponse
     {
         public bool mobile_upload_audio;
+    }
+    public void SetAudioClip(AudioClip clip)
+    {
+        this.clip = clip;
     }
 }
