@@ -11,7 +11,7 @@ public class MobileTest : MonoBehaviour
 {
     UnityWebRequest Request;
     AsyncOperation asyncOp;
-  
+
     private string json { get; set; }
     public GameObject barPrefab;
     private Dictionary<string, string> DesJson;
@@ -24,7 +24,7 @@ public class MobileTest : MonoBehaviour
 
     // Use this for initialization
     void Start()
-    {                
+    {
         Request = UnityWebRequest.Get("http://taiga.aiv01.it/mobile/match/participants/");
         asyncOp = Request.Send();
 
@@ -39,20 +39,20 @@ public class MobileTest : MonoBehaviour
     void Update()
     {
         if (asyncOp != null && asyncOp.isDone)
-        {         
+        {
             if (Request.responseCode == 200)
-            {             
+            {
                 json = Encoding.UTF8.GetString(Request.downloadHandler.data);
-                DesJson = (Dictionary<string,string>)JsonConvert.DeserializeObject(json, typeof(Dictionary<string,string>));
+                DesJson = (Dictionary<string, string>)JsonConvert.DeserializeObject(json, typeof(Dictionary<string, string>));
 
                 if (DesJson.Count <= 0)
                 {
                     Debug.Log("No Players Connected");
                     return;
-                }                         
+                }
             }
             BarPrefabMethods();
-        }        
+        }
     }
 
     private void BarPrefabMethods()
@@ -66,18 +66,18 @@ public class MobileTest : MonoBehaviour
 
         //For each prefab text print player name
         int t = 0;
-        foreach(Text text in textPlayers)
+        foreach (Text text in textPlayers)
         {
             if (t >= textPlayers.Count)
                 return;
 
             t++;
-            text.text = nicknames[t - 1];                                
+            text.text = nicknames[t - 1];
         }
-  
+
         //For each prefab image print player photo
         int b = 0;
-        foreach(Image image in photoPlayers)
+        foreach (Image image in photoPlayers)
         {
             if (b >= urls.Count)
                 return;
@@ -85,6 +85,7 @@ public class MobileTest : MonoBehaviour
             b++;
             image.name = urls[b - 1];
         }
+
     }
     private void InstatiatePrefabForEachPlayer()
     {
@@ -98,7 +99,7 @@ public class MobileTest : MonoBehaviour
 
             GameObject bar = Instantiate(barPrefab, FindObjectOfType<Canvas>().transform);
             bar.name = "Bar" + i;
-          //  bar.gameObject.AddComponent<TextureDownload>().Download();
+            //  bar.gameObject.AddComponent<TextureDownload>().Download();
             barPrefabs.Add(bar);
 
             foreach (GameObject prefab in barPrefabs)
@@ -116,7 +117,7 @@ public class MobileTest : MonoBehaviour
             photoPlayers.Add(image);
         }
     }
-}       
+}
 
-  
+
 

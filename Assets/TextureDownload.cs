@@ -6,8 +6,9 @@ using UnityEngine.Networking;
 
 
 
-public class TextureDownload : MonoBehaviour {
-  
+public class TextureDownload : MonoBehaviour
+{
+
     private Image image;
     private Sprite sprite;
 
@@ -17,12 +18,15 @@ public class TextureDownload : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
-      
+    void Update()
+    {
+
     }
 
     IEnumerator GetTexture()
     {
+        if (gameObject.name == "")
+            yield break;
         UnityWebRequest www = UnityWebRequest.GetTexture("http://" + gameObject.name);
         yield return www.Send();
 
@@ -30,11 +34,12 @@ public class TextureDownload : MonoBehaviour {
         {
             Debug.Log(www.error);
         }
-        else {
+        else
+        {
             Texture2D myTexture = ((DownloadHandlerTexture)www.downloadHandler).texture;
             sprite = CreateSprite(myTexture);
             GetComponent<Image>().overrideSprite = sprite;
-        }      
+        }
     }
     private Sprite CreateSprite(Texture2D texture)
     {

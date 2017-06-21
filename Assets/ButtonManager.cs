@@ -1,13 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.Networking;
-using System;
+using Newtonsoft.Json;
 
-public class ButtonManager : MonoBehaviour {
+public class ButtonManager : MonoBehaviour
+{
+    public class JsonData
+    {
+        public int buttonId;
+        public string nickName;
+        public string deviceId;
+    }
 
-    enum Code : byte { Zero = 0, First = 1, Second = 2, Third = 3};
+    enum Code : byte { Zero = 0, First = 1, Second = 2, Third = 3 };
 
     private string deviceName;
 
@@ -17,62 +22,74 @@ public class ButtonManager : MonoBehaviour {
 
     AsyncOperation operation;
 
+    private JsonData SerJson;
+
+    private string json;
+
     private string url;
 
     void Awake()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(() => { SendPacket(); });       
+        button.onClick.AddListener(() => { SendPacket(); });
+        deviceName = SystemInfo.deviceUniqueIdentifier;
+        url = "http://taiga.aiv01.it/mobile/match/send-empower/";
     }
 
     // Use this for initialization
-    void Start () {
- 
-    }
-	
-	// Update is called once per frame
-	void Update () {
-
+    void Start()
+    {
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+    private JsonData InstantiateJson(int id, string nickName, string deviceName)
+    {
+        SerJson = new JsonData();
+        SerJson.buttonId = id;
+        SerJson.nickName = nickName;
+        SerJson.deviceId = deviceName;
+        return SerJson;
+    }
 
     public void SendPacket()
-    {      
-        if(button.name == "Button")
+    {
+        switch (button.name)
         {
-            //Send(0, namePlayerText, SystemInfo.deviceUniqueIdentifier);
-            Debug.Log("Sending: Code " + "0 " + "-  " + button.transform.parent.Find("NamePlayer").GetComponent<Text>().text + " " + SystemInfo.deviceUniqueIdentifier);     
+            case "Button":
+                json = JsonConvert.SerializeObject(InstantiateJson(0, button.transform.GetComponentInParent<Text>().text, deviceName));
+                Send(json);
+                Debug.Log("Sending: Code " + "0 " + "-  " + button.transform.GetComponentInParent<Text>().text + " " + deviceName);
+                break;
+            case "Button (1)":
+                json = JsonConvert.SerializeObject(InstantiateJson(1, button.transform.GetComponentInParent<Text>().text, deviceName));
+                Send(json);
+                Debug.Log("Sending: Code " + "1 " + "- " + button.transform.GetComponentInParent<Text>().text + " " + deviceName);
+                break;
+            case "Button (2)":
+                json = JsonConvert.SerializeObject(InstantiateJson(2, button.transform.GetComponentInParent<Text>().text, deviceName));
+                Send(json);
+                Debug.Log("Sending: Code " + "2 " + "- " + button.transform.GetComponentInParent<Text>().text + " " + deviceName);
+                break;
+            case "Button (3)":
+                json = JsonConvert.SerializeObject(InstantiateJson(3, button.transform.GetComponentInParent<Text>().text, deviceName));
+                Send(json);
+                Debug.Log("Sending: Code " + "3 " + "- " + button.transform.GetComponentInParent<Text>().text + " " + deviceName);
+                break;
         }
-        else if(button.name == "Button (1)")
-        {
-            //Send(1, namePlayerText, SystemInfo.deviceUniqueIdentifier);
-            Debug.Log("Sending: Code " + "1 " + "- " + button.transform.parent.Find("NamePlayer").GetComponent<Text>().text + " " + SystemInfo.deviceUniqueIdentifier);
-        }
-        else if(button.name == "Button (2)")
-        {
-            //Send(2, namePlayerText, SystemInfo.deviceUniqueIdentifier);
-            Debug.Log("Sending: Code " + "2 " + "- " + button.transform.parent.Find("NamePlayer").GetComponent<Text>().text + " " + SystemInfo.deviceUniqueIdentifier);
-        }
-        else if(button.name == "Button (3)")
-        {
-            //Send(3, namePlayerText, SystemInfo.deviceUniqueIdentifier);
-            Debug.Log("Sending: Code " + "3 " + "- " + button.transform.parent.Find("NamePlayer").GetComponent<Text>().text + " " + SystemInfo.deviceUniqueIdentifier);
-        }     
     }
 
-    private void Send(byte code, string nickname, string Id)
+    private void Send(string json)
     {
-        float[] array = new float[code + nickname.Length + Id.Length];
-      
-        byte[] packet = new byte[array.Length * sizeof(float)];
-        Buffer.BlockCopy(array, 0, packet, 0, array.Length);
-        string formData = BitConverter.ToString(packet);
-        request = UnityWebRequest.Post(url + code + "?nickname=" + nickname + "?mobile_id=" + SystemInfo.deviceUniqueIdentifier, formData);
-        UploadHandlerRaw upHandler = new UploadHandlerRaw(packet);
-        upHandler.contentType = "Application/octet-stream";
-        request.uploadHandler = upHandler;
+        string formData = json;
+        request = UnityWebRequest.Post(url, formData);
         operation = request.Send();
 
         Debug.Log("Sended");
     }
 }
+
+
