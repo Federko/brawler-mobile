@@ -58,13 +58,15 @@ public class AudioRegister : MonoBehaviour
         recordBar.gameObject.SetActive(true);
         maxRecordBar.gameObject.SetActive(true);
     }
-    private void StopRegisterAudio()
+    public void StopRegisterAudio()
     {
         if (Microphone.IsRecording(microphones[0]))
+        {
             Microphone.End(microphones[0]);
 
-        button.colors = defaultColors;
-        GetComponent<SendAudio>().SetAudioClip(clip);
+            button.colors = defaultColors;
+            GetComponent<SendAudio>().SetAudioClip(clip);
+        }
     }
     public void HandleAudio()
     {
