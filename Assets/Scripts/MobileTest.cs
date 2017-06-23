@@ -4,18 +4,19 @@ using UnityEngine.Networking;
 using System.Text;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System;
 
 public class MobileTest : MonoBehaviour
 {
+    public Text playersNumber;
+
     UnityWebRequest Request;
     AsyncOperation asyncOp;
 
-    public Transform parent;
+    public Transform panel;
     private string json { get; set; }
-
-    private float distance { get; set; }
 
     public GameObject barPrefab;
 
@@ -37,7 +38,6 @@ public class MobileTest : MonoBehaviour
     {
         Request = UnityWebRequest.Get("http://taiga.aiv01.it/mobile/match/participants/");
         asyncOp = Request.Send();
-        distance = 50;
 
         barPrefabs = new List<GameObject>();
         textPlayers = new List<Text>();
@@ -108,14 +108,11 @@ public class MobileTest : MonoBehaviour
                     return;
             }
 
-            GameObject bar = Instantiate(barPrefab, parent);
+            GameObject bar = Instantiate(barPrefab, panel);
+            bar.transform.localScale = Vector3.one;
      //       bar.name = "Bar" + i;    
             barPrefabs.Add(bar);
-
-            foreach (GameObject prefab in barPrefabs)
-            {
-                prefab.transform.localPosition += new Vector3(0, distance, 0);
-            }
+            playersNumber.text = "Players:\n" + panel.transform.childCount + "/8";
         }
 
         foreach (GameObject prefab in barPrefabs)
@@ -126,6 +123,10 @@ public class MobileTest : MonoBehaviour
             Image image = prefab.transform.Find("Image").GetComponent<Image>();
             photoPlayers.Add(image);
         }
+    }
+    public void ChangeScene()
+    {
+        SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
     }
 }
 
