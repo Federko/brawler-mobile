@@ -13,20 +13,30 @@ public class MobileTest : MonoBehaviour
     AsyncOperation asyncOp;
 
     private string json { get; set; }
+
+    private float distance { get; set; }
+
     public GameObject barPrefab;
+
     private Dictionary<string, string> DesJson;
+
     private List<GameObject> barPrefabs;
 
     private List<Text> textPlayers;
+
     private List<string> nicknames;
+
     private List<string> urls;
+
     private List<Image> photoPlayers;
+
 
     // Use this for initialization
     void Start()
     {
         Request = UnityWebRequest.Get("http://taiga.aiv01.it/mobile/match/participants/");
         asyncOp = Request.Send();
+        distance = 50;
 
         barPrefabs = new List<GameObject>();
         textPlayers = new List<Text>();
@@ -98,13 +108,12 @@ public class MobileTest : MonoBehaviour
             }
 
             GameObject bar = Instantiate(barPrefab, FindObjectOfType<Canvas>().transform);
-            bar.name = "Bar" + i;
-            //  bar.gameObject.AddComponent<TextureDownload>().Download();
+            bar.name = "Bar" + i;    
             barPrefabs.Add(bar);
 
             foreach (GameObject prefab in barPrefabs)
             {
-                prefab.transform.localPosition += new Vector3(0, 50, 0);
+                prefab.transform.localPosition += new Vector3(0, distance, 0);
             }
         }
 

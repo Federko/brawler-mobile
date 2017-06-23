@@ -7,12 +7,10 @@ public class ButtonManager : MonoBehaviour
 {
     public class JsonData
     {
-        public int buttonId;
-        public string nickName;
-        public string deviceId;
+        public int code;
+        public string nickname;
+        public string id;
     }
-
-    enum Code : byte { Zero = 0, First = 1, Second = 2, Third = 3 };
 
     private string deviceName;
 
@@ -46,12 +44,12 @@ public class ButtonManager : MonoBehaviour
     {
 
     }
-    private JsonData InstantiateJson(int id, string nickName, string deviceName)
+    private JsonData CreateJson(int code, string nickname, string id)
     {
         SerJson = new JsonData();
-        SerJson.buttonId = id;
-        SerJson.nickName = nickName;
-        SerJson.deviceId = deviceName;
+        this.SerJson.code = code;
+        this.SerJson.nickname = nickname;
+        this.SerJson.id = id;
         return SerJson;
     }
 
@@ -60,32 +58,31 @@ public class ButtonManager : MonoBehaviour
         switch (button.name)
         {
             case "Button":
-                json = JsonConvert.SerializeObject(InstantiateJson(0, button.transform.GetComponentInParent<Text>().text, deviceName));
+                json = JsonConvert.SerializeObject(CreateJson(0, button.transform.GetComponentInParent<Text>().text, deviceName));
                 Send(json);
-                Debug.Log("Sending: Code " + "0 " + "-  " + button.transform.GetComponentInParent<Text>().text + " " + deviceName);
+                Debug.Log(json);
                 break;
             case "Button (1)":
-                json = JsonConvert.SerializeObject(InstantiateJson(1, button.transform.GetComponentInParent<Text>().text, deviceName));
+                json = JsonConvert.SerializeObject(CreateJson(1, button.transform.GetComponentInParent<Text>().text, deviceName));
                 Send(json);
-                Debug.Log("Sending: Code " + "1 " + "- " + button.transform.GetComponentInParent<Text>().text + " " + deviceName);
+                Debug.Log(json);
                 break;
             case "Button (2)":
-                json = JsonConvert.SerializeObject(InstantiateJson(2, button.transform.GetComponentInParent<Text>().text, deviceName));
+                json = JsonConvert.SerializeObject(CreateJson(2, button.transform.GetComponentInParent<Text>().text, deviceName));
                 Send(json);
-                Debug.Log("Sending: Code " + "2 " + "- " + button.transform.GetComponentInParent<Text>().text + " " + deviceName);
+                Debug.Log(json);
                 break;
             case "Button (3)":
-                json = JsonConvert.SerializeObject(InstantiateJson(3, button.transform.GetComponentInParent<Text>().text, deviceName));
+                json = JsonConvert.SerializeObject(CreateJson(3, button.transform.GetComponentInParent<Text>().text, deviceName));
                 Send(json);
-                Debug.Log("Sending: Code " + "3 " + "- " + button.transform.GetComponentInParent<Text>().text + " " + deviceName);
+                Debug.Log(json);
                 break;
         }
     }
 
     private void Send(string json)
-    {
-        string formData = json;
-        request = UnityWebRequest.Post(url, formData);
+    {  
+        request = UnityWebRequest.Post(url, json);
         operation = request.Send();
 
         Debug.Log("Sended");

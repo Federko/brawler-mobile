@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 
 
-
 public class TextureDownload : MonoBehaviour
 {
 
