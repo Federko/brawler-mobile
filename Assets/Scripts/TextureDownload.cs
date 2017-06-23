@@ -7,12 +7,11 @@ using UnityEngine.Networking;
 
 public class TextureDownload : MonoBehaviour
 {
-
     private Image image;
     private Sprite sprite;
-
     void Start()
     {
+        image = GetComponent<Image>();
         StartCoroutine(GetTexture());
     }
 
@@ -37,7 +36,7 @@ public class TextureDownload : MonoBehaviour
         {
             Texture2D myTexture = ((DownloadHandlerTexture)www.downloadHandler).texture;
             sprite = CreateSprite(myTexture);
-            GetComponent<Image>().overrideSprite = sprite;
+            image.overrideSprite = sprite;
         }
     }
     private Sprite CreateSprite(Texture2D texture)
