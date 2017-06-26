@@ -9,7 +9,7 @@ public class SendAudio : MonoBehaviour
 {
     private UnityWebRequest request;
     private AsyncOperation operation;
-
+    public Button button;
     private AudioClip clip;
 
     private string url;
@@ -22,8 +22,15 @@ public class SendAudio : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (request != null && request.isError)
+        {
+            Debug.Log(request.error);
+            return;
+        }
         if (operation != null && operation.isDone)
         {
+            operation = null;
+            request = null;
             JsonResponse response = JsonUtility.FromJson<JsonResponse>(request.downloadHandler.text);
 
             if (response.mobile_upload_audio)
@@ -52,7 +59,6 @@ public class SendAudio : MonoBehaviour
             upHandler.contentType = "application/octet-stream";
             request.uploadHandler = upHandler;
             operation = request.Send();
-            clip = null;
             return;
         }
         Debug.Log("ERROR! IMPOSSIBLE GET RAW AUDIO");
@@ -64,5 +70,11 @@ public class SendAudio : MonoBehaviour
     public void SetAudioClip(AudioClip clip)
     {
         this.clip = clip;
+        button.interactable = true;
+    }
+    public void DisableButton()
+    {
+        button.interactable = false;
+        clip = null;
     }
 }
