@@ -55,6 +55,7 @@ public class AudioRegister : MonoBehaviour
         button.colors = pressedColors;
         recordBar.gameObject.SetActive(true);
         maxRecordBar.gameObject.SetActive(true);
+        GetComponent<SendAudio>().DisableButton();
     }
     public void StopRegisterAudio()
     {
